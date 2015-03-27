@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+  </head>
+  <body>
+    <script>
+      var source = new EventSource('/events');
+      source.addEventListener("message",function(e) {
+        console.log(e)
+        console.log("Iam in message")
+        document.body.innerHTML += e.data +  '<br>';
+      });
+
+      source.addEventListener("task",function(e) {
+        console.log(e)
+        console.log("Iam in task")
+        document.body.innerHTML += e.data +  '<br>';
+      });
+
+      source.addEventListener("inboxcount",function(e) {
+        console.log(e)
+        console.log("Iam in inboxcount")
+        document.body.innerHTML += e.data +  '<br>';
+      });
+    </script>
+  </body>
+</html>
