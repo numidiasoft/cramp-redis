@@ -3,14 +3,14 @@ module Sleek
 
     def initialize
       @redis = client 
+      @pubsub = @redis.pubsub
     end
 
     def pubsub(channels)
-      pubsub = @redis.pubsub
       channels.each do |channel|
-        pubsub.subscribe(channel).callback { puts "Subscribed" }
+        @pubsub.subscribe(channel).callback { puts "Subscribed to #{channel}" }
       end
-      pubsub
+      @pubsub
     end
 
     def publish(key, data)
@@ -27,7 +27,7 @@ module Sleek
 
     private
     def client
-       EM::Hiredis.connect(Config.redis.url) 
+      EM::Hiredis.connect(Config.redis.url) 
     end
 
   end
