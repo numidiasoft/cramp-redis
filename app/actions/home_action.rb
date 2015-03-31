@@ -6,27 +6,28 @@ class HomeAction < Cramp::SSE
   on_finish :close_redis_connection
 
   def events
-    channels = [:message, :task]
-    pubsub = redis.pubsub(channels)
+    pubsub = sleek_redis.pubsub(channels)
+    puts pubsub.connected?
 
-    channels.each do |channel|
-      pubsub.on(channel) { |channel, message|
-        data = format_data(message, channel)
-        render data.to_json, event: data[:type]
-      }
+    pubsub.on(:message) do |channel, message|
+      data = format_data(message, channel)
+      puts data.inspect
+      render data.to_json, event: data[:type]
     end
+
   end
 
 
   def close_redis_connection
-    redis.connection.on(:disconnected) do
+    sleek_redis.connection.on(:disconnected) do
       puts 'Iam disconnected'
     end
-    redis.close
+    sleek_redis.close
   end
 
+
   private
-  def redis
+  def sleek_redis
     @redis ||= Sleek::Redis.new
   end
 
@@ -36,6 +37,12 @@ class HomeAction < Cramp::SSE
       data = { message: message, channel: channel, type: json_message.keys.first }
     rescue JSON::ParserError => e
       { message: message, type: "message", channel: channel }
+    end
+  end
+
+  def channels
+    Sleek::Config.redis.channels.map.map do |channel|
+      "events:#{channel}:#{params[:scope]}"
     end
   end
 
