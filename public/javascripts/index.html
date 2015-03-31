@@ -5,7 +5,11 @@
   </head>
   <body>
     <script>
-      var source = new EventSource('/events');
+      params = location.search.replace("?","")
+      channelScope = params.split("&")[0].split("=")[1] || "all"
+      console.log("Scope : " + channelScope)
+
+      var source = new EventSource('/events?scope=' + channelScope);
       source.addEventListener("message",function(e) {
         console.log(e)
         console.log("Iam in message")
