@@ -5,7 +5,7 @@ require 'hashie'
 module Sleek
   module Config
     extend self
-      
+
     def application
       Hashie::Mash.new(load_yaml_config)
     end

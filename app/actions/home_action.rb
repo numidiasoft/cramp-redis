@@ -6,17 +6,15 @@ class HomeAction < Cramp::SSE
   on_finish :close_redis_connection
 
   def events
-    pubsub = sleek_redis.pubsub(channels)
-    puts pubsub.connected?
+    puts @env.inspect
+    sleek_redis.pubsub(channels)
 
-    pubsub.on(:message) do |channel, message|
+    sleek_redis.on_message do |channel, message|
       data = format_data(message, channel)
       puts data.inspect
       render data.to_json, event: data[:type]
     end
-
   end
-
 
   def close_redis_connection
     sleek_redis.connection.on(:disconnected) do
@@ -24,7 +22,6 @@ class HomeAction < Cramp::SSE
     end
     sleek_redis.close
   end
-
 
   private
   def sleek_redis

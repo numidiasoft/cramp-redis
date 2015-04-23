@@ -2,7 +2,7 @@ module Sleek
   class Redis
 
     def initialize
-      @redis = client 
+      @redis = client
       @pubsub = @redis.pubsub
     end
 
@@ -11,6 +11,12 @@ module Sleek
         @pubsub.subscribe(channel).callback { puts "Subscribed to #{channel}" }
       end
       @pubsub
+    end
+
+    def on_message
+      @pubsub.on(:message) do |channel, message|
+        yield(channel, message)
+      end
     end
 
     def publish(key, data)
@@ -27,7 +33,7 @@ module Sleek
 
     private
     def client
-      EM::Hiredis.connect(Config.redis.url) 
+      EM::Hiredis.connect(Config.redis.url)
     end
 
   end

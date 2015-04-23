@@ -15,6 +15,7 @@ gem 'redis'
 gem 'em-hiredis'
 
 gem "hashie", "3.3.2"
+gem 'rspec'
 
 # For async Active Record models
 # gem 'mysql2', '~> 0.2.11'
